@@ -131,7 +131,6 @@ def genToken(mfa):
     response = requests.request("POST", url, headers=headers, data = payload)
 
     token = "Bearer " + (response.json())["access_token"]
-    print(token)
     return token
 
 def genMfa():
