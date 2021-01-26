@@ -1,6 +1,6 @@
 import requests
 import os.path as path
-import getMfa
+import gmail
 import time
 
 rhUsername, rhPassword = open('rh_creds.txt', 'r').read().split()
@@ -131,6 +131,7 @@ def genToken(mfa):
     response = requests.request("POST", url, headers=headers, data = payload)
 
     token = "Bearer " + (response.json())["access_token"]
+    print(token)
     return token
 
 def genMfa():
@@ -154,13 +155,12 @@ def genMfa():
     }
 
     response = requests.request("POST", url, headers=headers, data = payload)
-
-oldMfa = getMfa.main()
+oldMfa = gmail.main()
 genMfa()
-newMfa = getMfa.main()
+time.sleep(5)
+newMfa = gmail.main()
 while (newMfa == oldMfa):
-    newMfa = getMfa.main()
-
+    newMfa = gmail.main()
 token = genToken(newMfa)
 holdings = []
 
