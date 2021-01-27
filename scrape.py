@@ -1,7 +1,7 @@
 import requests
 import os.path as path
-import gmail
 import time
+import genToken
 
 rhUsername, rhPassword = open('rh_creds.txt', 'r').read().split()
 
@@ -107,60 +107,7 @@ def getOrders(token):
     f.close()
     return output
 
-
-def genToken(mfa):
-    payload = "{\"grant_type\":\"password\",\"scope\":\"internal\",\"client_id\":\"c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS\",\"expires_in\":86400,\"device_token\":\"4dfc5356-bd56-41c2-85a6-f1da6c499200\",\"username\":\"%s\",\"password\":\"%s\", \"mfa_code\":\"%s\"}" % (rhUsername, rhPassword, mfa)
-
-    headers = {
-        'authority': 'api.robinhood.com',
-        'sec-ch-ua': '"Google Chrome";v="87", " Not;A Brand";v="99", "Chromium";v="87"',
-        'x-robinhood-api-version': '1.411.9',
-        'dnt': '1',
-        'sec-ch-ua-mobile': '?0',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36',
-        'content-type': 'application/json',
-        'accept': '*/*',
-        'origin': 'https://robinhood.com',
-        'sec-fetch-site': 'same-site',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-dest': 'empty',
-        'referer': 'https://robinhood.com/',
-        'accept-language': 'en-US,en;q=0.9',
-    }
-
-    response = requests.request("POST", url, headers=headers, data = payload)
-
-    token = "Bearer " + (response.json())["access_token"]
-    return token
-
-def genMfa():
-    payload = "{\"grant_type\":\"password\",\"scope\":\"internal\",\"client_id\":\"c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS\",\"expires_in\":86400,\"device_token\":\"4dfc5356-bd56-41c2-85a6-f1da6c499200\",\"username\":\"%s\",\"password\":\"%s\"}" % (rhUsername, rhPassword)
-
-    headers = {
-        'authority': 'api.robinhood.com',
-        'sec-ch-ua': '"Google Chrome";v="87", " Not;A Brand";v="99", "Chromium";v="87"',
-        'x-robinhood-api-version': '1.411.9',
-        'dnt': '1',
-        'sec-ch-ua-mobile': '?0',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36',
-        'content-type': 'application/json',
-        'accept': '*/*',
-        'origin': 'https://robinhood.com',
-        'sec-fetch-site': 'same-site',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-dest': 'empty',
-        'referer': 'https://robinhood.com/',
-        'accept-language': 'en-US,en;q=0.9',
-    }
-
-    response = requests.request("POST", url, headers=headers, data = payload)
-oldMfa = gmail.main()
-genMfa()
-time.sleep(5)
-newMfa = gmail.main()
-while (newMfa == oldMfa):
-    newMfa = gmail.main()
-token = genToken(newMfa)
+token = (genToken.getToken()).rstrip()
 holdings = []
 
 if path.exists("holdings") == False:
