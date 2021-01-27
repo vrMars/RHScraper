@@ -1,7 +1,7 @@
 import requests
 import os.path as path
 import time
-import genToken
+import oauth
 
 rhUsername, rhPassword = open('rh_creds.txt', 'r').read().split()
 
@@ -107,7 +107,7 @@ def getOrders(token):
     f.close()
     return output
 
-token = (genToken.getToken()).rstrip()
+token = (oauth.getToken()).rstrip()
 holdings = []
 
 if path.exists("holdings") == False:
