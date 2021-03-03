@@ -94,7 +94,7 @@ def getOptionsProfits(holdings_options, token):
         posJson = posRes.json()
         profits = float(posJson["adjusted_mark_price"]) * 100 * float(quantity)
         curPrice = '$' + str("{:.2f}".format(abs(profits - totalCost)))
-        if profits > 0:
+        if profits - totalCost > 0:
             curPrice = '+' + curPrice
         else:
             curPrice = '-' + curPrice
@@ -177,9 +177,9 @@ def getOptionsOrders(token):
 
     for result in results:
         idUrl = getOptionId(result)
-        if result["closing_strategy"] != None or float(result["canceled_quantity"]) != 0:
+        if (result["closing_strategy"] != None and result["cancel_url"] == None) or float(result["canceled_quantity"]) != 0:
             closedSet.add(idUrl)
-        elif idUrl not in closedSet:
+        elif idUrl not in closedSet and result["cancel_url"] == None:
             # closing strat is none; not previously closed
             # [optionId, premium, quantity, last_updated]
             resSet.add((result["chain_symbol"], idUrl, result["premium"], result["quantity"], result["updated_at"]))
